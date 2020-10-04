@@ -193,43 +193,7 @@ extension Node where Context == HTML.HeadContext {
     static func lightHead<T: Website>(for site: T) -> Node {
         return .group([
             .encoding(.utf8),
-            .viewport(.accordingToDevice),
-            .favicons(for: site)
-        ])
-    }
-}
-
-extension Node where Context == HTML.HeadContext {
-    // Favicons
-    static func favicons<T: Website>(for site: T) -> Node {
-        let icoURL = URL(string: "\(site.url)/favicon.ico")
-        let png32URL = URL(string: "\(site.url)/favicon-32x32.png")
-        let png16URL = URL(string: "\(site.url)/favicon-16x16.png")
-        let appleTouchIconURL = URL(string: "\(site.url)/apple-touch-icon.png")
-        let maskIconURL = URL(string: "\(site.url)/favicon-16x16.png")
-
-        return .group([
-            .link(.rel(.icon),
-                  .href(icoURL!)
-            ),
-            .link(.rel(.icon),
-                  .href(png32URL!),
-                  .type("image/png"),
-                  .sizes("32x32")
-            ),
-            .link(.rel(.icon),
-                  .href(png16URL!),
-                  .type("image/png"),
-                  .sizes("16x16")
-            ),
-            .link(.rel(.appleTouchIcon),
-                  .href(appleTouchIconURL!),
-                  .sizes("180x180")
-            ),
-            .link(.rel(.maskIcon),
-                  .href(maskIconURL!),
-                  .color("#052d60")
-            ),
+            .viewport(.accordingToDevice)
         ])
     }
 }
