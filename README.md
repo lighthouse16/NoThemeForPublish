@@ -12,7 +12,7 @@ let package = Package(
     ...
     dependencies: [
         ...
-        .package(url: "https://github.com/l1ghthouse/NoThemeForPublish", from: "0.1.0")
+        .package(url: "https://github.com/l1ghthouse/NoThemeForPublish.git", from: "0.1.6")
     ],
     targets: [
         .target(
