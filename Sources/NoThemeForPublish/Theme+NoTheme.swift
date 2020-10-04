@@ -20,10 +20,26 @@ public extension Theme {
 
 // MARK: - HTMLFactory
 private struct NoThemeHTMLFactory<Site: Website>: HTMLFactory {
+
+    // Meta Data
+    func metaData(siteName: String, title: String, desc: String, url: String) -> Node<HTML.HeadContext> {
+        .group([
+            .element(named: "title", text: title),
+            .meta(.name("description"), .content(desc)),
+            .link(.rel(.canonical), .href(url))
+        ])
+    }
+
     func makeIndexHTML(for index: Index, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: index, on: context.site),
+            .head(
+                .lightHead(for: context.site),
+                metaData(siteName: context.site.name,
+                         title: context.site.name,
+                         desc: context.site.description,
+                         url: context.site.url.absoluteString)
+            ),
             .body(
                 .h1(.text(context.site.name)),
                 .p(.text(context.site.description))
@@ -34,7 +50,13 @@ private struct NoThemeHTMLFactory<Site: Website>: HTMLFactory {
     func makeSectionHTML(for section: Section<Site>, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: section, on: context.site),
+            .head(
+                .lightHead(for: context.site),
+                metaData(siteName: context.site.name,
+                         title: section.title,
+                         desc: section.description,
+                         url: context.site.url.absoluteString + section.path.absoluteString)
+            ),
             .body(
                 .h1(.text(section.title)),
                 .itemList(for: section.items, on: context.site)
@@ -45,7 +67,13 @@ private struct NoThemeHTMLFactory<Site: Website>: HTMLFactory {
     func makeItemHTML(for item: Item<Site>, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: item, on: context.site),
+            .head(
+                .lightHead(for: context.site),
+                metaData(siteName: context.site.name,
+                         title: item.title,
+                         desc: item.description,
+                         url: context.site.url.absoluteString + item.path.absoluteString)
+            ),
             .body(
                 .article(
                     .div(
@@ -61,7 +89,13 @@ private struct NoThemeHTMLFactory<Site: Website>: HTMLFactory {
     func makePageHTML(for page: Page, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: page, on: context.site),
+            .head(
+                .lightHead(for: context.site),
+                metaData(siteName: context.site.name,
+                         title: page.title,
+                         desc: page.description,
+                         url: context.site.url.absoluteString + page.path.absoluteString)
+            ),
             .body(
                 .contentBody(page.body)
             )
@@ -71,7 +105,13 @@ private struct NoThemeHTMLFactory<Site: Website>: HTMLFactory {
     func makeTagListHTML(for page: TagListPage, context: PublishingContext<Site>) throws -> HTML? {
         HTML(
             .lang(context.site.language),
-            .head(for: page, on: context.site),
+            .head(
+                .lightHead(for: context.site),
+                metaData(siteName: context.site.name,
+                         title: page.title,
+                         desc: page.description,
+                         url: context.site.url.absoluteString + page.path.absoluteString)
+            ),
             .body(
                 .h1("Browse all tags"),
                 .ul(
@@ -91,7 +131,13 @@ private struct NoThemeHTMLFactory<Site: Website>: HTMLFactory {
     func makeTagDetailsHTML(for page: TagDetailsPage, context: PublishingContext<Site>) throws -> HTML? {
         HTML(
             .lang(context.site.language),
-            .head(for: page, on: context.site),
+            .head(
+                .lightHead(for: context.site),
+                metaData(siteName: context.site.name,
+                         title: page.title,
+                         desc: page.description,
+                         url: context.site.url.absoluteString + page.path.absoluteString)
+            ),
             .body(
                 .h1(
                     "Tagged with ",
@@ -139,5 +185,51 @@ private extension Node where Context == HTML.BodyContext {
                         .text(tag.string)
                     ))
                 })
+    }
+}
+
+extension Node where Context == HTML.HeadContext {
+    // Head
+    static func lightHead<T: Website>(for site: T) -> Node {
+        return .group([
+            .encoding(.utf8),
+            .viewport(.accordingToDevice),
+            .favicons(for: site)
+        ])
+    }
+}
+
+extension Node where Context == HTML.HeadContext {
+    // Favicons
+    static func favicons<T: Website>(for site: T) -> Node {
+        let icoURL = URL(string: "\(site.url)/favicon.ico")
+        let png32URL = URL(string: "\(site.url)/favicon-32x32.png")
+        let png16URL = URL(string: "\(site.url)/favicon-16x16.png")
+        let appleTouchIconURL = URL(string: "\(site.url)/apple-touch-icon.png")
+        let maskIconURL = URL(string: "\(site.url)/favicon-16x16.png")
+
+        return .group([
+            .link(.rel(.icon),
+                  .href(icoURL!)
+            ),
+            .link(.rel(.icon),
+                  .href(png32URL!),
+                  .type("image/png"),
+                  .sizes("32x32")
+            ),
+            .link(.rel(.icon),
+                  .href(png16URL!),
+                  .type("image/png"),
+                  .sizes("16x16")
+            ),
+            .link(.rel(.appleTouchIcon),
+                  .href(appleTouchIconURL!),
+                  .sizes("180x180")
+            ),
+            .link(.rel(.maskIcon),
+                  .href(maskIconURL!),
+                  .color("#052d60")
+            ),
+        ])
     }
 }
