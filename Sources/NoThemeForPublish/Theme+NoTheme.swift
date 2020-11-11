@@ -1,7 +1,7 @@
 /**
 *  NoThemeForPublish
 *  Theme+NoTheme.swift
-*  Copyright (c) 2020 Peter Cammeraat (https://l1ghthouse.net)
+*  Copyright (c) 2020 Lighthouse16 (https://lighthouse16.com)
 *  MIT license, see LICENSE file for details
 */
 
