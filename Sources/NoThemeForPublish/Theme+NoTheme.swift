@@ -1,7 +1,7 @@
 /**
 *  NoThemeForPublish
 *  Theme+NoTheme.swift
-*  Copyright (c) 2020 Lighthouse16 (https://lighthouse16.com)
+*  Copyright (c) 2020 Peter Wandering (https://peterwandering.com)
 *  MIT license, see LICENSE file for details
 */
 
